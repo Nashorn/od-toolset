@@ -1,0 +1,11 @@
+{
+    "name": "od-toolset",
+    "version": "1.0.0",
+    "description": "",
+    "main": "tools/seam.js",
+    "author": "",
+    "license": "MIT",
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {}
+  }
