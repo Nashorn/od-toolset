@@ -99,25 +99,25 @@ var Koncat = {
             sourceIsHtml = true;
             prefix = "<script>";
             suffix = "</script>";
-            reg 	 = /(?:<script\s*|\/\/\=\s*)require(?:="true" src="|\s)([0-9A-Za-z\-\_\.\/\\]*)(?:"><\/script>)?/im;
+            reg      = /(?:<script\s*|\/\/\=\s*)require(?:="true" src="|\s)([0-9A-Za-z\-\_\.\/\\]*)(?:"><\/script>)?/im;
         } else {
-            // reg 	 = /\/\/\=\s*require\s([0-9A-Za-z\-\_\.\/\\]*)/im;
+            // reg   = /\/\/\=\s*require\s([0-9A-Za-z\-\_\.\/\\]*)/im;
             reg = /^(?:\/\/\=\s*require|import\W)\s*[\'\"]?([0-9A-Za-z\-\_\.\/\\]*)[\'\"]?/im;
         }
-    	var finished = false;
-	    // var reg 	 = /\/\/\=\s*require\s([0-9A-Za-z\-\_\.\/\\]*)/im; ///\'@require\s([0-9A-Za-z\-\_\.\/\\]*)\'/im;
-	    var usages   = {};
+        var finished = false;
+        // var reg   = /\/\/\=\s*require\s([0-9A-Za-z\-\_\.\/\\]*)/im; ///\'@require\s([0-9A-Za-z\-\_\.\/\\]*)\'/im;
+        var usages   = {};
 
         var code = (source instanceof File) ? 
-        	Koncat.Read(source) : source;
+            Koncat.Read(source) : source;
         do {
-        	code = code.replace(reg, function(fullmatch, namespace, index, match){
+            code = code.replace(reg, function(fullmatch, namespace, index, match){
                 var path = Koncat.ResolvePath(namespace);
                 var file = Koncat.File(path);
                 if (file) {
-                	if(!usages[path]) {
-                		BUILDCONFIG.Verbos && 
-                		print("Scanning Loadpaths For: " + path);
+                    if(!usages[path]) {
+                        BUILDCONFIG.Verbos && 
+                        print("Scanning Loadpaths For: " + path);
                         usages[path] = true;
                         // tempSrc = Koncat.Read(file) + "\n";
                         // code = prefix + tempSrc
@@ -128,8 +128,8 @@ var Koncat = {
                         // code = Koncat.Read(file) + "\n";
                         code = Koncat.Read(file) + "\n";
                         code = Koncat.Transpile(code);
-					} else {code=""; }
-				} else {
+                    } else {code=""; }
+                } else {
                     print("Unable to locate file: " + path);
                 }
                 return code;
@@ -147,7 +147,7 @@ var Koncat = {
     
     ResolvePath: function(nsPath){
         var path = (/\.js$/.test(nsPath)) ? 
-        	nsPath : (nsPath.replace(/\./ig, "/") + ".js");
+            nsPath : (nsPath.replace(/\./ig, "/") + ".js");
         return path;
     },
     
@@ -167,7 +167,7 @@ var Koncat = {
     
     File: function(filename){
         filename = filename;//.replace(/\.js$/, "") + ".js";
-      	
+        
         var file, location, index = 0;
         while ((location = BUILDCONFIG.LoadPaths[index++])) {
             file = new File(location + "/", filename);
@@ -175,7 +175,7 @@ var Koncat = {
             if (file && file.isFile()) {
                 break;
             }
-		};
+        };
         return file;
     },
     
@@ -199,18 +199,18 @@ var Koncat = {
     },
     
     MakeSourcePath : function(){
-    	var sourceFileDir = new File(BUILDCONFIG.Output.SourcePath.substr(0,BUILDCONFIG.Output.SourcePath.lastIndexOf("/")+1)).mkdirs();
-    	return sourceFileDir;
+        var sourceFileDir = new File(BUILDCONFIG.Output.SourcePath.substr(0,BUILDCONFIG.Output.SourcePath.lastIndexOf("/")+1)).mkdirs();
+        return sourceFileDir;
     },
     
     // Compress : function(){
     //     return;
-    // 	var OS = java.lang.System.getProperty("os.name").toLowerCase();
-    // 	try {
+    //  var OS = java.lang.System.getProperty("os.name").toLowerCase();
+    //  try {
     //         var cmd = "java -jar tools/yuicompressor-2.4.2.jar " + BUILDCONFIG.Output.SourcePath + " -o " + BUILDCONFIG.Output.CompressedPath + " --line-break 200 --nomunge --preserve-semi --disable-optimizations";
-	// 		(OS.indexOf("mac") >= 0) ? 
-	// 			runCommand("sh",  "-c", cmd) :
-	// 			runCommand("cmd", "/C", cmd);
+    //      (OS.indexOf("mac") >= 0) ? 
+    //          runCommand("sh",  "-c", cmd) :
+    //          runCommand("cmd", "/C", cmd);
     //     }
     //     catch (e) {
     //         if(BUILDCONFIG.Verbos){print("WARNING: Build OK, but unable to compress output.")}
@@ -218,13 +218,13 @@ var Koncat = {
     // },
     Compress : function(){
         print("COMPRESSING...")
-    	var OS = java.lang.System.getProperty("os.name").toLowerCase();
-    	try {
+        var OS = java.lang.System.getProperty("os.name").toLowerCase();
+        try {
             // var cmd = "java -jar node_modules/od-toolset/tools/yuicompressor-2.4.8.jar " + BUILDCONFIG.Output.SourcePath + " -o " + BUILDCONFIG.Output.CompressedPath + " --nomunge --disable-optimizations";
             var cmd = "java -jar node_modules/od-toolset/tools/closure-compiler-v20180716.jar --compilation_level WHITESPACE_ONLY --js " + BUILDCONFIG.Output.SourcePath + "  --js_output_file " + BUILDCONFIG.Output.CompressedPath + " -W QUIET --language_in ECMASCRIPT_2017 --language_out ECMASCRIPT_2017";
-			(OS.indexOf("mac") >= 0) ? 
-				runCommand("sh",  "-c", cmd) :
-				runCommand("cmd", "/C", cmd);
+            (OS.indexOf("mac") >= 0) ? 
+                runCommand("sh",  "-c", cmd) :
+                runCommand("cmd", "/C", cmd);
         }
         catch (e) {
             if(BUILDCONFIG.Verbos){
@@ -234,56 +234,56 @@ var Koncat = {
     },
     
     Log : function(){
-    	var sourceFile = new File(BUILDCONFIG.Output.SourcePath).getCanonicalFile();
-		var compressedFile = new File(BUILDCONFIG.Output.CompressedPath).getCanonicalFile();
-		// var compressedFile = false;
-		if (sourceFile && sourceFile.isFile()) {
-			print("\nBUILD SUCCESSFULL");
-			print("source >> \n" + BUILDCONFIG.Output.SourcePath + " -- " + (Math.round(sourceFile.length() / 1024)) + "KB");
-		}
-		
-		if (compressedFile && compressedFile.isFile()) {
-			if(BUILDCONFIG.Verbos){print("\n\ncompressed >> \n" + BUILDCONFIG.Output.CompressedPath + " -- " + (Math.round(compressedFile.length() / 1024)) + "KB\n\n");}
-		}
+        var sourceFile = new File(BUILDCONFIG.Output.SourcePath).getCanonicalFile();
+        var compressedFile = new File(BUILDCONFIG.Output.CompressedPath).getCanonicalFile();
+        // var compressedFile = false;
+        if (sourceFile && sourceFile.isFile()) {
+            print("\nBUILD SUCCESSFULL");
+            print("source >> \n" + BUILDCONFIG.Output.SourcePath + " -- " + (Math.round(sourceFile.length() / 1024)) + "KB");
+        }
+        
+        if (compressedFile && compressedFile.isFile()) {
+            if(BUILDCONFIG.Verbos){print("\n\ncompressed >> \n" + BUILDCONFIG.Output.CompressedPath + " -- " + (Math.round(compressedFile.length() / 1024)) + "KB\n\n");}
+        }
     },
     
     Configure : function(){
-    	var configFile;
-		try{configFile = new File(arguments[0]+"/", "-buildconfig.js");}catch(ex){}
-		
-		if(configFile.isFile() && configFile.exists()) {
-			load(arguments[0] + "/-buildconfig.js");
-			if(BUILDCONFIG.Verbos){print("using " + (arguments[0]+"/") + "-buildconfig.js")}
-			
-			for(var j=0; j<=BUILDCONFIG.LoadPaths.length-1; j++) {
-				BUILDCONFIG.LoadPaths[j] = arguments[0] + "/" + BUILDCONFIG.LoadPaths[j];
-			};
-			BUILDCONFIG.Output.SourcePath =  arguments[0] + "/" + BUILDCONFIG.Output.SourcePath;
-			BUILDCONFIG.Output.CompressedPath =  arguments[0] + "/" + BUILDCONFIG.Output.CompressedPath;
-			BUILDCONFIG.ApplicationFolderName = arguments[0];
-			if(!BUILDCONFIG.Input) {
-				BUILDCONFIG.Input = arguments[0] + "/main.js";
-			}
-		}
-		else {
-			print("missing -buildconfig.js: " + arguments[0] + "/")
-		}
+        var configFile;
+        try{configFile = new File(arguments[0]+"/", "-buildconfig.js");}catch(ex){}
+        
+        if(configFile.isFile() && configFile.exists()) {
+            load(arguments[0] + "/-buildconfig.js");
+            if(BUILDCONFIG.Verbos){print("using " + (arguments[0]+"/") + "-buildconfig.js")}
+            
+            for(var j=0; j<=BUILDCONFIG.LoadPaths.length-1; j++) {
+                BUILDCONFIG.LoadPaths[j] = arguments[0] + "/" + BUILDCONFIG.LoadPaths[j];
+            };
+            BUILDCONFIG.Output.SourcePath =  arguments[0] + "/" + BUILDCONFIG.Output.SourcePath;
+            BUILDCONFIG.Output.CompressedPath =  arguments[0] + "/" + BUILDCONFIG.Output.CompressedPath;
+            BUILDCONFIG.ApplicationFolderName = arguments[0];
+            if(!BUILDCONFIG.Input) {
+                BUILDCONFIG.Input = arguments[0] + "/main.js";
+            }
+        }
+        else {
+            print("missing -buildconfig.js: " + arguments[0] + "/")
+        }
     }
 };
 
 
 function main(p) {
-	try{ 
-		Koncat.Configure(p);
-		var file = Koncat.File(BUILDCONFIG.Input);
-		var newcode = Koncat.Build(file);
-		Koncat.MakeSourcePath();
-		Koncat.DumpSource(newcode, BUILDCONFIG.Output.SourcePath);
-		Koncat.Compress();
-		Koncat.Log();
-	} catch(e) {
-		print("BUILD ERROR:\n" + e.message);
-	}
+    try{ 
+        Koncat.Configure(p);
+        var file = Koncat.File(BUILDCONFIG.Input);
+        var newcode = Koncat.Build(file);
+        Koncat.MakeSourcePath();
+        Koncat.DumpSource(newcode, BUILDCONFIG.Output.SourcePath);
+        Koncat.Compress();
+        Koncat.Log();
+    } catch(e) {
+        print("BUILD ERROR:\n" + e.message);
+    }
 };
 
 main(arguments[0]);
